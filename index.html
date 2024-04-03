@@ -1,23 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calendar Cross-Referencer</title>
-<style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    .container { display: flex; flex-direction: column; max-width: 600px; margin: auto; }
-    .person { margin-bottom: 20px; }
-    .button { margin-top: 10px; }
-    .date-selector { display: flex; flex-wrap: wrap; }
-    .date-selector label { margin-right: 10px; }
-</style>
-</head>
-<body>
-<div class="container">
-    <h2>Calendar Cross-Referencer</h2>
-    <label for="monthSelect">Select Month:</label>
-    <select id="monthSelect">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calendar Cross-Referencer</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .container {
+        display: flex;
+        flex-direction: column;
+        max-width: 600px;
+        margin: auto;
+      }
+      .person {
+        margin-bottom: 20px;
+      }
+      .button {
+        margin-top: 10px;
+      }
+      .date-selector {
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .date-selector label {
+        margin-right: 10px;
+        margin-top: 5px;
+      }
+      input[type="text"],
+      select,
+      .button {
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Calendar Cross-Referencer</h2>
+      <label for="monthSelect">Select Month:</label>
+      <select id="monthSelect">
         <option value="0">Jan</option>
         <option value="1">Feb</option>
         <option value="2">Mar</option>
@@ -30,65 +53,79 @@
         <option value="9">Oct</option>
         <option value="10">Nov</option>
         <option value="11">Dec</option>
-    </select>
-    <div id="peopleInputs"></div>
-    <button class="button" onclick="addPerson()">Add Person</button>
-    <button class="button" onclick="findCommonDates()">Find Common Available Dates</button>
-    <div id="output"></div>
-</div>
+      </select>
+      <div id="peopleInputs"></div>
+      <button class="button" onclick="addPerson()">Add Person</button>
+      <button class="button" onclick="findCommonDates()">
+        Find Common Available Dates
+      </button>
+      <div id="output"></div>
+    </div>
 
-<script>
-const maxPeople = 5;
-let peopleCount = 0;
+    <script>
+      const maxPeople = 5;
+      let peopleCount = 0;
 
-function addPerson() {
-    if (peopleCount >= maxPeople) {
-        alert('Maximum of 5 people reached.');
-        return;
-    }
-    peopleCount++;
-    const personDiv = document.createElement('div');
-    personDiv.className = 'person';
-    personDiv.innerHTML = `<h3>Person ${peopleCount}</h3><div class="date-selector" id="person${peopleCount}Dates"></div>`;
-    const datesContainer = personDiv.querySelector('.date-selector');
+      function addPerson() {
+        if (peopleCount >= maxPeople) {
+          alert("Maximum of 5 people reached.");
+          return;
+        }
+        peopleCount++;
+        const personDiv = document.createElement("div");
+        personDiv.className = "person";
+        personDiv.innerHTML = `<label for="name${peopleCount}">Name:</label>
+        <input type="text" id="name${peopleCount}" placeholder="Person ${peopleCount}'s Name">
+        <div class="date-selector" id="person${peopleCount}Dates"></div>`;
+        const datesContainer = personDiv.querySelector(".date-selector");
 
-    for (let day = 1; day <= 31; day++) {
-        const checkBox = document.createElement('input');
-        checkBox.type = 'checkbox';
-        checkBox.id = `p${peopleCount}d${day}`;
-        checkBox.className = 'day-checkbox';
-        const label = document.createElement('label');
-        label.htmlFor = checkBox.id;
-        label.textContent = day;
-        datesContainer.appendChild(checkBox);
-        datesContainer.appendChild(label);
-    }
+        for (let day = 1; day <= 31; day++) {
+          const checkBox = document.createElement("input");
+          checkBox.type = "checkbox";
+          checkBox.id = `p${peopleCount}d${day}`;
+          checkBox.className = "day-checkbox";
+          const label = document.createElement("label");
+          label.htmlFor = checkBox.id;
+          label.textContent = day;
+          datesContainer.appendChild(checkBox);
+          datesContainer.appendChild(label);
 
-    document.getElementById('peopleInputs').appendChild(personDiv);
-}
+          if (day === 26) {
+            let br = document.createElement("br");
+            datesContainer.appendChild(br);
+          }
+        }
 
-function findCommonDates() {
-    const commonDates = [];
-    for (let day = 1; day <= 31; day++) {
-        let isCommon = true;
-        for (let person = 1; person <= peopleCount; person++) {
+        document.getElementById("peopleInputs").appendChild(personDiv);
+      }
+
+      function findCommonDates() {
+        const commonDates = [];
+        for (let day = 1; day <= 31; day++) {
+          let isCommon = true;
+          for (let person = 1; person <= peopleCount; person++) {
             const checkBox = document.getElementById(`p${person}d${day}`);
             if (!checkBox || !checkBox.checked) {
-                isCommon = false;
-                break;
+              isCommon = false;
+              break;
             }
+          }
+          if (isCommon) commonDates.push(day);
         }
-        if (isCommon) commonDates.push(day);
-    }
 
-    const monthSelect = document.getElementById('monthSelect');
-    const month = monthSelect.options[monthSelect.selectedIndex].text;
-    const outputMessage = commonDates.length > 0 ? `For the month of ${month}, everyone is available on: ${commonDates.join(', ')}.` : `No common available dates found for the month of ${month}.`;
-    document.getElementById('output').textContent = outputMessage;
-}
+        const monthSelect = document.getElementById("monthSelect");
+        const month = monthSelect.options[monthSelect.selectedIndex].text;
+        const outputMessage =
+          commonDates.length > 0
+            ? `For the month of ${month}, everyone is available on: ${commonDates.join(
+                ", "
+              )}.`
+            : `No common available dates found for the month of ${month}.`;
+        document.getElementById("output").textContent = outputMessage;
+      }
 
-// Initial person
-addPerson();
-</script>
-</body>
+      // Automatically add the first person to start
+      addPerson();
+    </script>
+  </body>
 </html>
