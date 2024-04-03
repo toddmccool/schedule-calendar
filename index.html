@@ -21,12 +21,9 @@
       .button {
         margin-top: 10px;
       }
-      .date-selector {
-        display: flex;
-        flex-wrap: wrap;
-      }
-      .date-selector label {
-        margin-right: 10px;
+      .day {
+        display: inline-block;
+        margin-right: 5px;
         margin-top: 5px;
       }
       input[type="text"],
@@ -80,48 +77,46 @@
         const datesContainer = personDiv.querySelector(".date-selector");
 
         for (let day = 1; day <= 31; day++) {
+          const dayDiv = document.createElement("div");
+          dayDiv.className = "day";
+
           const checkBox = document.createElement("input");
           checkBox.type = "checkbox";
           checkBox.id = `p${peopleCount}d${day}`;
-          checkBox.className = "day-checkbox";
+
           const label = document.createElement("label");
           label.htmlFor = checkBox.id;
           label.textContent = day;
-          datesContainer.appendChild(checkBox);
-          datesContainer.appendChild(label);
 
-          if (day === 26) {
-            let br = document.createElement("br");
-            datesContainer.appendChild(br);
-          }
+          dayDiv.appendChild(checkBox);
+          dayDiv.appendChild(label);
+
+          datesContainer.appendChild(dayDiv);
         }
 
         document.getElementById("peopleInputs").appendChild(personDiv);
       }
 
       function findCommonDates() {
-        const commonDates = [];
+        let commonDates = [];
         for (let day = 1; day <= 31; day++) {
           let isCommon = true;
           for (let person = 1; person <= peopleCount; person++) {
-            const checkBox = document.getElementById(`p${person}d${day}`);
-            if (!checkBox || !checkBox.checked) {
+            if (!document.getElementById(`p${person}d${day}`).checked) {
               isCommon = false;
               break;
             }
           }
           if (isCommon) commonDates.push(day);
         }
-
         const monthSelect = document.getElementById("monthSelect");
         const month = monthSelect.options[monthSelect.selectedIndex].text;
-        const outputMessage =
+        document.getElementById("output").textContent =
           commonDates.length > 0
             ? `For the month of ${month}, everyone is available on: ${commonDates.join(
                 ", "
               )}.`
             : `No common available dates found for the month of ${month}.`;
-        document.getElementById("output").textContent = outputMessage;
       }
 
       // Automatically add the first person to start
